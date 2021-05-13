@@ -1,28 +1,37 @@
 #!/usr/local/bin/python3
 
 # Agasha Ratam
-# Version May 7, 2021
+# Version May 3, 2021
 
 import csv
 import datetime
 import utils
 import json
 
-def get_songs():
-	f = open('data/songs.json', 'r')
-	features = json.loads(f.read())
+def get_features():
+	features = dict()
+
+	f = open('data/hot-100-features.csv', 'r')
+	obj = csv.reader(f)
+
+	variables = next(obj)
+	for row in obj:
+		songId = row[variables.index('SongID')]
+
+		temp = dict()
+		for v in variables:
+			if v != 'SongID':
+				temp[v] = row[variables.index(v)]			
+		features[songId] = temp
+	
 	f.close()
+	
+	return features
 
 def get_week_conversion():
-	"""
-	Returns a dictionary d.
-	Example:
-		d['08/02/1958'] = 1
-		d['08/09/1958'] = 2
-	"""
 	weekIds = dict()
 
-	f = open('data/billboard-list.csv', 'r')
+	f = open('data/hot-100.csv', 'r')
 	obj = csv.reader(f)
 
 	variables = next(obj)
